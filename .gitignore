@@ -1,3 +1,8 @@
 cmd.exe
 __pycache__
 __init__.py
+doemarkbook_accounts.xlsx
+~$doemarkbook_accounts.xlsx
+config.py
+context_ids.py
+api_cache.sqlite
