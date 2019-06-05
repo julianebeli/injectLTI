@@ -1,39 +1,49 @@
 import __init__
 import config
 from api.requestor2 import API
-from context_ids import delete_context_id
+from context_ids import context_id
+contexts = context_id[:5]
+contexts = [330, ]
+import json
 
 cache_time = 60 * 60 * 24 * 5
-api = API('beta', cache=cache_time)
+api = API('beta')
 
 
 def remover():
     remove_lti = []
     delete_method = 'delete_external_tool_accounts'
     method = 'list_external_tools_accounts'
-    for context in delete_context_id:
+    for context in contexts:
         params = dict(methodname=method, account_id=context)
         api.add_method(**params)
         api.do()
-        remove_lti.append(dict(methodname=delete_method, account_id=context,
-                               external_tool_id=api.results[0]['id']))
+        print(json.dumps(api.results,indent=4))
+        for response in api.results:
+            remove_lti.append(dict(methodname=delete_method, account_id=context,
+                                   external_tool_id=response['id']))
 
     for entry in remove_lti:
         api.add_method(**entry)
-        # api.do()
+        api.do()
 
 
 def installer():
-    payload = dict(
+    LTI_settings = dict(
         name=config.name,
         config_type="by_url",
         config_url=config.config_url,
         consumer_key=config.consumer_key,
         shared_secret=config.shared_secret,
-        privacy_level="public"
+        privacy_level="public",
+        methodname='create_external_tool_accounts'
     )
-    print(payload)
+    for context in contexts:
+        LTI_settings.update(dict(account_id=context))
+        api.add_method(**LTI_settings)
+        api.do()
 
 
 if __name__ == '__main__':
+    remover()
     installer()
