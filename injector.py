@@ -2,13 +2,13 @@ import json
 import __init__
 import config
 from api.requestor2 import API
-from context_ids import context_id
-contexts = context_id
+from context_ids import context_id as contexts
+# contexts = context_id
 # contexts = context_id[:5]
 # contexts = [31, ]
 
 cache_time = 60 * 60 * 24 * 5
-api = API('beta')
+api = API('prod')
 
 
 def remover():
