@@ -7,6 +7,7 @@ from context_ids import context_id as contexts
 # contexts = context_id[:5]
 # contexts = [31, ]
 
+
 cache_time = 60 * 60 * 24 * 5
 api = API('prod')
 
@@ -19,12 +20,15 @@ def remover():
         params = dict(methodname=method, account_id=context)
         api.add_method(**params)
         api.do()
-        # print(json.dumps(api.results, indent=4))
+
         if not api.response_error:
             for response in api.results:
-                remove_lti.append(dict(methodname=delete_method, account_id=context,
-                                       external_tool_id=response['id']))
-
+                # there are other ltis in the account which we don't want to delete!
+                # who'd a thought?
+                if response['name'] == "DOE Markbook":  # maybe other aliases too?
+                    remove_lti.append(dict(methodname=delete_method, account_id=context,
+                                           external_tool_id=response['id']))
+    
     for entry in remove_lti:
         api.add_method(**entry)
         api.do()
